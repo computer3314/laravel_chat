@@ -27,11 +27,19 @@ class HomeController extends Controller
      */
     public function index()
     {
+     
         //找所有使用者LOG
-        $user = DB::select("select users.id, users.name, users.avatar, users.email, count(is_read) as unread 
-        from users LEFT  JOIN  messages ON users.id = messages.from and is_read = 0 and messages.to = " . Auth::id() . "
+        $user = DB::select("select users.id, users.name, users.avatar, users.email, count(is_read) as unread , max(messages.id) as maxid 
+        from users LEFT  JOIN  messages ON users.id = messages.from and is_read = 0 and messages.to = " . Auth::id() . " 
         where users.id != " . Auth::id() . " 
         group by users.id, users.name, users.avatar, users.email");
+
+        foreach ($user as $key => $row) {
+            $volume[$key]  = $row['id'];
+          
+        }
+        $volume  = array_column($data, 'id');
+        array_multisort($volume, SORT_DESC, $data);
         return view('home',['users'=>$user]);
     }
     public function getMessage($user_id)
@@ -76,7 +84,7 @@ class HomeController extends Controller
             )
         );
 
-        $data = ['from' => $from, 'to' => $to]; // sending from and to user id when pressed enter
+        $data = ['from' => $from, 'to' => $to, 'message' => $message]; // sending from and to user id when pressed enter
         $pusher->trigger('my-channel', 'my-event', $data);
     }
 }

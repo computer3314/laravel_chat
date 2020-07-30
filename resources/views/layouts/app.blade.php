@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', '欣舶萊聊天室') }}</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -125,7 +125,7 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    {{ config('app.name', '欣舶萊聊天室') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -150,6 +150,8 @@
                                 </li>
                             @endif
                         @else
+                       
+                        <img src="{{ Auth::user()->avatar }}" style="width:60px;height:39px" alt="" class="media-object">
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
@@ -203,6 +205,9 @@ channel.bind('my-event', function(data) {
   //alert(JSON.stringify(data));
   if(my_id==data.from){
    $('#'+data.to).click();
+   $('#'+data.to).parent().prepend($('#'+data.to));
+   $('#'+data.to+" p[class='email']").html(data.message);
+   //alert("post")
   }
   else if(my_id==data.to){
     if(receiver_id==data.from){
@@ -212,12 +217,19 @@ channel.bind('my-event', function(data) {
 var pending=parseInt($('#'+data.from).find('.pending').html());
 if(pending){
 $("#"+data.from).find('.pending').html(pending+1);
+
+
 }
 else{
 $("#"+data.from).append('<span class="pending">1</span>');
 }
     }
+    $('#'+data.from).parent().prepend($('#'+data.from));
+
+    $('#'+data.from+" p[class='email']").html(data.message);
+    //alert("get")
   }
+
 });
 
             $('.user').click(function(){
@@ -256,6 +268,7 @@ $("#"+data.from).append('<span class="pending">1</span>');
                     },
                     complete:function(){
                         scrollTo();
+                      
                     }
                 });
                 }
