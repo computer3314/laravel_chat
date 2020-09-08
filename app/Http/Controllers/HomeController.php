@@ -34,12 +34,7 @@ class HomeController extends Controller
         where users.id != " . Auth::id() . " 
         group by users.id, users.name, users.avatar, users.email");
 
-        foreach ($user as $key => $row) {
-            $volume[$key]  = $row['id'];
-          
-        }
-        $volume  = array_column($data, 'id');
-        array_multisort($volume, SORT_DESC, $data);
+     
         return view('home',['users'=>$user]);
     }
     public function getMessage($user_id)
